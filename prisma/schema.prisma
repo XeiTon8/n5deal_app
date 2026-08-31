@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  BUYER
+  SELLER
+  MANAGER
+}
+
+enum ParticipantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum AssetStatus {
+  DRAFT
+  PUBLISHED
+  SUSPENDED
+}
+
+enum Industry {
+  TECHNOLOGY
+  MANUFACTURING
+  RETAIL
+  HEALTHCARE
+  LOGISTICS
+  AGRICULTURE
+  ENERGY
+  FINANCIAL_SERVICES
+}
+
+enum DealType {
+  FULL_ACQUISITION
+  MAJORITY_STAKE
+  MINORITY_STAKE
+  ASSET_PURCHASE
+}
+
+enum Region {
+  UKRAINE
+  EUROPE
+  UK
+  NORTH_AMERICA
+  MIDDLE_EAST
+  ASIA
+}
+
+enum InquiryStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+model User {
+  id          String  @id @default(cuid())
+  email       String  @unique
+  name        String
+  companyName String?
+  role        Role
+
+  status           ParticipantStatus @default(ACTIVE)
+  suspensionReason String?
+  statusChangedAt  DateTime?
+
+  createdAt DateTime @default(now())
+
+  buyerProfile      BuyerProfile?
+  assets            Asset[]
+  sentInquiries     Inquiry[]     @relation("InquirySender")
+  receivedInquiries Inquiry[]     @relation("InquiryRecipient")
+
+  @@index([role, status])
+}
+
+model BuyerProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  headline    String
+  description String
+  industries  Industry[]
+  dealTypes   DealType[]
+  regions     Region[]
+  budgetMin   Int
+  budgetMax   Int
+
+  updatedAt DateTime @updatedAt
+}
+
+model Asset {
+  id       String @id @default(cuid())
+  sellerId String
+  seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+  industry    Industry
+  dealType    DealType
+  region      Region
+
+  askingPrice   Int
+  annualRevenue Int?
+  ebitda        Int?
+  stakePercent  Int?
+
+  status           AssetStatus @default(PUBLISHED)
+  suspensionReason String?
+  statusChangedAt  DateTime?
+
+  createdAt DateTime @default(now())
+
+  inquiries Inquiry[]
+
+  @@index([status, industry])
+  @@index([status, askingPrice])
+}
+
+model Inquiry {
+  id String @id @default(cuid())
+
+  senderId    String
+  sender      User   @relation("InquirySender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   User   @relation("InquiryRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  assetId String?
+  asset   Asset?  @relation(fields: [assetId], references: [id], onDelete: SetNull)
+
+  message   String
+  status    InquiryStatus @default(NEW)
+  createdAt DateTime      @default(now())
+
+  @@index([recipientId, createdAt])
+  @@index([senderId, createdAt])
+}
