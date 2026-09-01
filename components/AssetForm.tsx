@@ -54,6 +54,7 @@ function Submit() {
 
 export function AssetForm() {
   const [state, action] = useActionState<FormState, FormData>(createAsset, {});
+  const v = state.values ?? {};
   const e = state.errors ?? {};
 
   return (
@@ -65,7 +66,7 @@ export function AssetForm() {
       )}
 
       <Field label="Title" name="title" errors={e.title}>
-        <input id="title" name="title" required className={input} />
+        <input id="title" name="title" required defaultValue={v.title ?? ""} className={input} />
       </Field>
 
       <Field
@@ -74,35 +75,45 @@ export function AssetForm() {
         errors={e.description}
         hint="At least 40 characters."
       >
-        <textarea id="description" name="description" rows={5} required className={input} />
+        <textarea
+          id="description"
+          name="description"
+          rows={5}
+          required
+          defaultValue={v.description ?? ""}
+          className={input}
+        />
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Industry" name="industry" errors={e.industry}>
-          <select id="industry" name="industry" required className={`${input} cursor-pointer`}>
-            {INDUSTRIES.map((v) => (
-              <option key={v} value={v}>
-                {INDUSTRY_LABELS[v]}
+          <select id="industry" name="industry" required defaultValue={v.industry ?? ""} className={`${input} cursor-pointer`}>
+            <option value="" disabled>
+              Select industry
+            </option>
+            {INDUSTRIES.map((option) => (
+              <option key={option} value={option}>
+                {INDUSTRY_LABELS[option]}
               </option>
             ))}
           </select>
         </Field>
 
         <Field label="Deal type" name="dealType" errors={e.dealType}>
-          <select id="dealType" name="dealType" required className={`${input} cursor-pointer`}>
-            {DEAL_TYPES.map((v) => (
-              <option key={v} value={v}>
-                {DEAL_TYPE_LABELS[v]}
+          <select id="dealType" name="dealType" required defaultValue={v.dealType ?? ""} className={`${input} cursor-pointer`}>
+            {DEAL_TYPES.map((option) => (
+              <option key={option} value={option}>
+                {DEAL_TYPE_LABELS[option]}
               </option>
             ))}
           </select>
         </Field>
 
         <Field label="Region" name="region" errors={e.region}>
-          <select id="region" name="region" required className={`${input} cursor-pointer`}>
-            {REGIONS.map((v) => (
-              <option key={v} value={v}>
-                {REGION_LABELS[v]}
+          <select id="region" name="region" required defaultValue={v.region ?? ""} className={`${input} cursor-pointer`}>
+            {REGIONS.map((option) => (
+              <option key={option} value={option}>
+                {REGION_LABELS[option]}
               </option>
             ))}
           </select>
@@ -117,6 +128,7 @@ export function AssetForm() {
             type="number"
             min={1}
             required
+            defaultValue={v.askingPrice ?? ""}
             className={input}
           />
         </Field>
@@ -131,6 +143,7 @@ export function AssetForm() {
             id="stakePercent"
             name="stakePercent"
             type="number"
+            defaultValue={v.stakePercent ?? ""}
             min={1}
             max={100}
             className={input}
@@ -147,13 +160,14 @@ export function AssetForm() {
             id="annualRevenue"
             name="annualRevenue"
             type="number"
+            defaultValue={v.annualRevenue ?? ""}
             min={0}
             className={input}
           />
         </Field>
 
         <Field label="EBITDA, USD" name="ebitda" errors={e.ebitda} hint="Optional.">
-          <input id="ebitda" name="ebitda" type="number" min={0} className={input} />
+          <input id="ebitda" name="ebitda" type="number" defaultValue={v.ebitda ?? ""} min={0} className={input} />
         </Field>
       </div>
 

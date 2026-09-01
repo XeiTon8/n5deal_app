@@ -7,7 +7,11 @@ import { requireUser } from "@/lib/session";
 import { assetSchema } from "@/lib/validation";
 import type { Industry, DealType, Region } from "@/lib/generated/prisma/client";
 
-export type FormState = { errors?: Record<string, string[]>; message?: string };
+export type FormState = { 
+    errors?: Record<string, string[]>; 
+    message?: string
+    values?: Record<string, string>;
+ };
 
 export async function createAsset(
   _prev: FormState,
@@ -18,13 +22,17 @@ export async function createAsset(
     const user = await requireUser("SELLER");
     sellerId = user.id;
   } catch {
-    return { message: "Switch to a seller account to publish an asset." };
+    return { 
+        message: "Switch to a seller account to publish an asset.", 
+        values: Object.fromEntries(formData) as Record<string, string>
+    };
   }
 
-  const parsed = assetSchema.safeParse(Object.fromEntries(formData));
+   const raw = Object.fromEntries(formData) as Record<string, string>;
+   const parsed = assetSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { errors: parsed.error.flatten().fieldErrors };
+    return { errors: parsed.error.flatten().fieldErrors, values: raw};
   }
 
   const d = parsed.data;
