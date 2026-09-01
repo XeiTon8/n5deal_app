@@ -20,8 +20,8 @@ export default async function BuyersPage({
 
   return (
     <main className="mx-auto max-w-5xl p-8">
-      <h1 className="text-2xl font-semibold">Buyers</h1>
-      <p className="mt-1 text-sm text-gray-500">
+      <h1 className="text-3xl font-semibold tracking-tight">Buyers</h1>
+      <p className="mt-1 text-sm text-muted">
         {buyers.length} {buyers.length === 1 ? "buyer" : "buyers"}
       </p>
 
@@ -43,23 +43,33 @@ export default async function BuyersPage({
                 <li key={buyer.id}>
                   <Link
                     href={`/buyers/${buyer.id}`}
-                    className="block rounded-lg border p-4 transition-colors hover:border-gray-400"
+                    className="card block p-5 transition-shadow hover:shadow-md"
                   >
-                    <div className="font-medium">{buyer.companyName ?? buyer.name}</div>
-                    <div className="mt-1 text-sm text-gray-600">{profile.headline}</div>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
+                    <div className="font-semibold">{buyer.companyName ?? buyer.name}</div>
+                    <div className="mt-1 text-sm text-muted">{profile.headline}</div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <div className="field">
+                        <span className="field-label">Budget</span>
+                        <span className="field-value text-brand">
+                          ${profile.budgetMin.toLocaleString("en-US")} – $
+                          {profile.budgetMax.toLocaleString("en-US")}
+                        </span>
+                      </div>
+                      <div className="field">
+                        <span className="field-label">Deal types</span>
+                        <span className="field-value">
+                          {profile.dealTypes.length} selected
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-1.5">
                       {profile.industries.map((industry) => (
-                        <span
-                          key={industry}
-                          className="rounded-full border px-2.5 py-0.5 text-xs text-gray-600"
-                        >
+                        <span key={industry} className="pill">
                           {INDUSTRY_LABELS[industry]}
                         </span>
                       ))}
-                    </div>
-                    <div className="mt-2 text-sm">
-                      ${profile.budgetMin.toLocaleString("en-US")} – $
-                      {profile.budgetMax.toLocaleString("en-US")}
                     </div>
                   </Link>
                 </li>

@@ -38,15 +38,19 @@ export async function Header() {
         ];
 
   return (
-    <header className="border-b">
+    <header className="border-b border-line bg-white">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-8 py-3">
         <div className="flex items-center gap-6">
-          <Link href="/" className="font-semibold">
-            N5Deal
+          <Link href="/" className="text-lg font-semibold tracking-tight">
+            N5<span className="text-brand">Deal</span>
           </Link>
-          <nav className="flex gap-4 text-sm">
+          <nav className="flex gap-1 text-sm">
             {links.map(([href, label]) => (
-              <Link key={href} href={href} className="text-gray-600 hover:text-gray-900">
+              <Link
+                key={href}
+                href={href}
+                className="rounded-full px-3 py-1.5 text-muted transition-colors hover:bg-page hover:text-ink"
+              >
                 {label}
               </Link>
             ))}
@@ -55,7 +59,7 @@ export async function Header() {
 
         <div className="flex items-center gap-3">
           {user && (
-            <span className="text-xs uppercase tracking-wide text-gray-500">
+            <span className="hidden text-[11px] uppercase tracking-wide text-muted sm:block">
               {user.role.toLowerCase()}
             </span>
           )}

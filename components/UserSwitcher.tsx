@@ -25,7 +25,7 @@ export function UserSwitcher({
       value={currentId ?? ""}
       disabled={isPending}
       onChange={(e) => startTransition(() => switchUser(e.target.value))}
-      className="cursor-pointer rounded-md border px-3 py-1.5 text-sm"
+      className="cursor-pointer rounded-full border border-line bg-white px-3 py-1.5 text-sm"
     >
       <option value="" disabled>
         Select a demo user

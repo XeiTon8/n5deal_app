@@ -1,8 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { INDUSTRY_LABELS, DEAL_TYPE_LABELS, REGION_LABELS } from "@/lib/constants";
 import { BackLink } from "@/components/BackLink";
+
+import { getCurrentUser } from "@/lib/session";
+import { ContactForm } from "@/components/ContactForm";
 
 function money(value: number) {
   return `$${value.toLocaleString("en-US")}`;
@@ -14,6 +16,7 @@ export default async function AssetPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const currentUser = await getCurrentUser();
 
   const asset = await prisma.asset.findFirst({
     where: {
@@ -39,43 +42,62 @@ export default async function AssetPage({
     <main className="mx-auto max-w-3xl p-8">
       <BackLink fallback="/assets" label="Back to assets" />
 
-      <h1 className="mt-4 text-2xl font-semibold">{asset.title}</h1>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{asset.title}</h1>
 
-      <div className="mt-2 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-1.5">
         {[
           INDUSTRY_LABELS[asset.industry],
           DEAL_TYPE_LABELS[asset.dealType],
           REGION_LABELS[asset.region],
         ].map((label) => (
-          <span key={label} className="rounded-full border px-2.5 py-0.5 text-xs text-gray-600">
+          <span key={label} className="pill">
             {label}
           </span>
         ))}
       </div>
 
-      <dl className="mt-6 grid grid-cols-2 gap-4 rounded-lg border p-4 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {financials.map((item) => (
-          <div key={item.label}>
-            <dt className="text-xs uppercase tracking-wide text-gray-500">{item.label}</dt>
-            <dd className={`mt-1 text-sm ${item.value ? "font-medium" : "text-gray-400"}`}>
+          <div key={item.label} className="field bg-white">
+            <span className="field-label">{item.label}</span>
+            <span
+              className={`field-value ${
+                item.value
+                  ? item.label === "Asking price"
+                    ? "text-brand"
+                    : ""
+                  : "font-normal text-muted"
+              }`}
+            >
               {item.value ?? "Not disclosed"}
-            </dd>
+            </span>
           </div>
         ))}
-      </dl>
+      </div>
 
-      <section className="mt-6">
+      <section className="card mt-6 p-5">
         <h2 className="text-sm font-medium uppercase tracking-wide text-gray-500">About</h2>
         <p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{asset.description}</p>
       </section>
 
-      <section className="mt-6 rounded-lg border p-4">
+      <section className="card mt-6 p-5">
         <h2 className="text-sm font-medium uppercase tracking-wide text-gray-500">Seller</h2>
         <p className="mt-1 font-medium">{asset.seller.companyName ?? asset.seller.name}</p>
         {asset.seller.companyName && (
           <p className="text-sm text-gray-600">{asset.seller.name}</p>
         )}
-        <p className="mt-3 text-sm text-gray-400">Contact form comes on day 3.</p>
+          {currentUser?.role === "BUYER" ? (
+            <div className="mt-4">
+              <ContactForm
+                assetId={asset.id}
+                placeholder="Introduce yourself and say what you would like to know about this business."
+              />
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-gray-500">
+              Switch to a buyer account to contact this seller.
+            </p>
+        )}
       </section>
 
       <p className="mt-6 text-xs text-gray-400">
