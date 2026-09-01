@@ -4,6 +4,8 @@ import { getCurrentUser } from "@/lib/session";
 import { BackLink } from "@/components/BackLink";
 import { ContactForm } from "@/components/ContactForm";
 import { INDUSTRY_LABELS, DEAL_TYPE_LABELS, REGION_LABELS } from "@/lib/constants";
+import { rankAssets } from "@/lib/matching";
+import Link from 'next/link'
 
 export default async function BuyerPage({
   params,
@@ -23,6 +25,12 @@ export default async function BuyerPage({
   if (!buyer?.buyerProfile) notFound();
 
   const profile = buyer.buyerProfile;
+
+  const candidates = await prisma.asset.findMany({
+    where: { status: "PUBLISHED", seller: { status: "ACTIVE" } },
+  });
+
+  const matches = rankAssets(candidates, profile);
 
   const interests = [
     { label: "Industries", values: profile.industries.map((v) => INDUSTRY_LABELS[v]) },
@@ -74,6 +82,47 @@ export default async function BuyerPage({
           {profile.description}
         </p>
       </section>
+
+       {matches.length > 0 && (
+        <section className="mt-6">
+          <h2 className="text-[11px] uppercase tracking-wide text-muted">
+            Suggested assets
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Ranked by how well each listing matches this mandate.
+          </p>
+
+          <ul className="mt-3 space-y-2">
+            {matches.map(({ asset, score, reasons }) => (
+              <li key={asset.id}>
+                <Link
+                  href={`/assets/${asset.id}`}
+                  className="card block p-4 transition-shadow hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="font-semibold">{asset.title}</span>
+                    <span className="shrink-0 text-xs text-muted">{score}% match</span>
+                  </div>
+
+                  <div className="mt-1 text-sm text-muted">
+                    {INDUSTRY_LABELS[asset.industry]} ·{" "}
+                    {DEAL_TYPE_LABELS[asset.dealType]} · $
+                    {asset.askingPrice.toLocaleString("en-US")}
+                  </div>
+
+                  <ul className="mt-2 flex flex-wrap gap-1.5">
+                    {reasons.map((reason) => (
+                      <li key={reason} className="pill">
+                        {reason}
+                      </li>
+                    ))}
+                  </ul>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="card mt-6 p-5">
         <h2 className="text-[11px] uppercase tracking-wide text-muted">Contact</h2>
