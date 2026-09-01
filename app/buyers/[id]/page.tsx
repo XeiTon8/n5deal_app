@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { BackLink } from "@/components/BackLink";
-import { INDUSTRY_LABELS, DEAL_TYPE_LABELS, REGION_LABELS } from "@/lib/constants";
-
 import { getCurrentUser } from "@/lib/session";
+import { BackLink } from "@/components/BackLink";
 import { ContactForm } from "@/components/ContactForm";
+import { INDUSTRY_LABELS, DEAL_TYPE_LABELS, REGION_LABELS } from "@/lib/constants";
 
 export default async function BuyerPage({
   params,
@@ -12,12 +11,14 @@ export default async function BuyerPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const currentUser = await getCurrentUser();
 
-  const buyer = await prisma.user.findFirst({
-    where: { id, role: "BUYER", status: "ACTIVE", buyerProfile: { isNot: null } },
-    include: { buyerProfile: true },
-  });
+  const [buyer, currentUser] = await Promise.all([
+    prisma.user.findFirst({
+      where: { id, role: "BUYER", status: "ACTIVE", buyerProfile: { isNot: null } },
+      include: { buyerProfile: true },
+    }),
+    getCurrentUser(),
+  ]);
 
   if (!buyer?.buyerProfile) notFound();
 
@@ -33,31 +34,30 @@ export default async function BuyerPage({
     <main className="mx-auto max-w-3xl p-8">
       <BackLink fallback="/buyers" label="Back to buyers" />
 
-      <h1 className="mt-4 text-2xl font-semibold">{buyer.companyName ?? buyer.name}</h1>
-      {buyer.companyName && <p className="text-sm text-gray-600">{buyer.name}</p>}
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight">
+        {buyer.companyName ?? buyer.name}
+      </h1>
+      {buyer.companyName && <p className="text-sm text-muted">{buyer.name}</p>}
 
       <p className="mt-3 text-lg">{profile.headline}</p>
 
-      <div className="mt-6 rounded-lg border p-4">
-        <div className="text-xs uppercase tracking-wide text-gray-500">Budget range</div>
-        <div className="mt-1 text-lg font-medium">
+      <div className="field mt-6 bg-white">
+        <span className="field-label">Budget range</span>
+        <span className="field-value text-brand">
           ${profile.budgetMin.toLocaleString("en-US")} – $
           {profile.budgetMax.toLocaleString("en-US")}
-        </div>
+        </span>
       </div>
 
-      <section className="mt-6 space-y-4">
+      <section className="card mt-6 space-y-4 p-5">
         {interests.map((group) => (
           <div key={group.label}>
-            <div className="mb-2 text-xs uppercase tracking-wide text-gray-500">
+            <div className="mb-2 text-[11px] uppercase tracking-wide text-muted">
               {group.label}
             </div>
             <div className="flex flex-wrap gap-1.5">
               {group.values.map((value) => (
-                <span
-                  key={value}
-                  className="rounded-full border px-2.5 py-0.5 text-xs text-gray-600"
-                >
+                <span key={value} className="pill">
                   {value}
                 </span>
               ))}
@@ -66,8 +66,8 @@ export default async function BuyerPage({
         ))}
       </section>
 
-      <section className="mt-6">
-        <h2 className="text-xs uppercase tracking-wide text-gray-500">
+      <section className="card mt-6 p-5">
+        <h2 className="text-[11px] uppercase tracking-wide text-muted">
           Investment thesis
         </h2>
         <p className="mt-2 whitespace-pre-line text-sm leading-relaxed">
@@ -75,10 +75,8 @@ export default async function BuyerPage({
         </p>
       </section>
 
-      <section className="mt-6 rounded-lg border p-4">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-gray-500">
-          Contact
-        </h2>
+      <section className="card mt-6 p-5">
+        <h2 className="text-[11px] uppercase tracking-wide text-muted">Contact</h2>
         {currentUser?.role === "SELLER" ? (
           <div className="mt-3">
             <ContactForm
@@ -87,7 +85,7 @@ export default async function BuyerPage({
             />
           </div>
         ) : (
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted">
             Switch to a seller account to contact this buyer.
           </p>
         )}

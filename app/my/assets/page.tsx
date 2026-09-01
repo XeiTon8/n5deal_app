@@ -15,38 +15,37 @@ export default async function MyAssetsPage() {
 
   return (
     <main className="mx-auto max-w-3xl p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">My assets</h1>
-        <Link
-          href="/my/assets/new"
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm text-white"
-        >
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-3xl font-semibold tracking-tight">My assets</h1>
+        <Link href="/my/assets/new" className="btn-primary">
           Publish asset
         </Link>
       </div>
 
       {assets.length === 0 ? (
-        <div className="mt-8 rounded-lg border border-dashed p-8 text-center">
-          <p className="text-sm text-gray-600">You have not published anything yet.</p>
-          <Link href="/my/assets/new" className="mt-2 inline-block text-sm underline">
+        <div className="mt-8 rounded-card border border-dashed border-line p-8 text-center">
+          <p className="text-sm text-muted">You have not published anything yet.</p>
+          <Link href="/my/assets/new" className="mt-2 inline-block text-sm text-brand hover:underline">
             Publish your first asset
           </Link>
         </div>
       ) : (
         <ul className="mt-6 space-y-3">
           {assets.map((a) => (
-            <li key={a.id} className="rounded-lg border p-4">
+            <li key={a.id} className="card p-5">
               <div className="flex items-start justify-between gap-4">
-                <div>
-                {a.status === 'PUBLISHED' ? (
-                    
-                    <Link href={`/assets/${a.id}`} className="font-medium hover:underline">
-                        {a.title}
+                <div className="min-w-0">
+                  {a.status === "PUBLISHED" ? (
+                    <Link
+                      href={`/assets/${a.id}`}
+                      className="font-semibold hover:underline"
+                    >
+                      {a.title}
                     </Link>
-                    ) : (
-                    <span className="font-medium">{a.title}</span>
-                )}    
-                  <div className="mt-1 text-sm text-gray-600">
+                  ) : (
+                    <span className="font-semibold">{a.title}</span>
+                  )}
+                  <div className="mt-1 text-sm text-muted">
                     {INDUSTRY_LABELS[a.industry]} · {DEAL_TYPE_LABELS[a.dealType]} · $
                     {a.askingPrice.toLocaleString("en-US")}
                   </div>
@@ -55,7 +54,7 @@ export default async function MyAssetsPage() {
               </div>
 
               {a.status === "SUSPENDED" && a.suspensionReason && (
-                <p className="mt-3 rounded-md bg-amber-50 p-3 text-sm text-amber-800">
+                <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
                   Suspended by the platform: {a.suspensionReason}
                 </p>
               )}
@@ -71,7 +70,7 @@ function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     PUBLISHED: "border-green-300 bg-green-50 text-green-700",
     SUSPENDED: "border-amber-300 bg-amber-50 text-amber-800",
-    DRAFT: "border-gray-300 bg-gray-50 text-gray-600",
+    DRAFT: "border-line bg-page text-muted",
   };
 
   return (

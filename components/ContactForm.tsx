@@ -8,11 +8,7 @@ import type { FormState } from "@/app/actions/assets";
 function Submit() {
   const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="cursor-pointer rounded-md bg-gray-900 px-4 py-2 text-sm text-white disabled:opacity-50"
-    >
+    <button type="submit" disabled={pending} className="btn-primary">
       {pending ? "Sending…" : "Send inquiry"}
     </button>
   );
@@ -32,7 +28,7 @@ export function ContactForm({
 
   if (sent) {
     return (
-      <p className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+      <p className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
         Inquiry sent. You can follow it up in My inquiries.
       </p>
     );
@@ -48,14 +44,17 @@ export function ContactForm({
         rows={4}
         required
         placeholder={placeholder}
-        className="w-full rounded-md border px-3 py-2 text-sm"
+        className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm"
       />
+
       {state.errors?.message?.map((m) => (
-        <p key={m} className="text-xs text-red-600">{m}</p>
+        <p key={m} className="text-xs text-red-600">
+          {m}
+        </p>
       ))}
-      {state.message && !sent && (
-        <p className="text-sm text-amber-700">{state.message}</p>
-      )}
+
+      {state.message && !sent && <p className="text-sm text-amber-700">{state.message}</p>}
+
       <Submit />
     </form>
   );

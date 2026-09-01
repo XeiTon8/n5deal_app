@@ -28,7 +28,7 @@ export default async function InquiriesPage() {
 
   return (
     <main className="mx-auto max-w-3xl p-8">
-      <h1 className="text-2xl font-semibold">My inquiries</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">My inquiries</h1>
 
       <Section title={`Received (${received.length})`} empty="No one has contacted you yet.">
         {received.map((i) => (
@@ -60,13 +60,21 @@ export default async function InquiriesPage() {
 }
 
 function Section({
-  title, empty, children,
-}: { title: string; empty: string; children: React.ReactNode[] }) {
+  title,
+  empty,
+  children,
+}: {
+  title: string;
+  empty: string;
+  children: React.ReactNode[];
+}) {
   return (
     <section className="mt-8">
-      <h2 className="text-sm font-medium uppercase tracking-wide text-gray-500">{title}</h2>
+      <h2 className="text-[11px] font-medium uppercase tracking-wide text-muted">
+        {title}
+      </h2>
       {children.length === 0 ? (
-        <p className="mt-3 text-sm text-gray-500">{empty}</p>
+        <p className="mt-3 text-sm text-muted">{empty}</p>
       ) : (
         <ul className="mt-3 space-y-3">{children}</ul>
       )}
@@ -75,7 +83,11 @@ function Section({
 }
 
 function InquiryCard({
-  party, partyLabel, asset, message, createdAt,
+  party,
+  partyLabel,
+  asset,
+  message,
+  createdAt,
 }: {
   party: { id: string; name: string; companyName: string | null; role: string };
   partyLabel: string;
@@ -87,28 +99,33 @@ function InquiryCard({
   const name = party.companyName ?? party.name;
 
   return (
-    <li className="rounded-lg border p-4">
+    <li className="card p-5">
       <div className="flex items-baseline justify-between gap-4">
         <div className="text-sm">
-          <span className="text-gray-500">{partyLabel} </span>
+          <span className="text-muted">{partyLabel} </span>
           {href ? (
-            <Link href={href} className="font-medium hover:underline">{name}</Link>
+            <Link href={href} className="font-semibold hover:underline">
+              {name}
+            </Link>
           ) : (
-            <span className="font-medium">{name}</span>
+            <span className="font-semibold">{name}</span>
           )}
         </div>
-        <time className="shrink-0 text-xs text-gray-500">
+        <time className="shrink-0 text-xs text-muted">
           {createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
         </time>
       </div>
 
       {asset && (
-        <p className="mt-1 text-sm text-gray-600">
-          Re: <Link href={`/assets/${asset.id}`} className="hover:underline">{asset.title}</Link>
+        <p className="mt-1 text-sm text-muted">
+          Re:{" "}
+          <Link href={`/assets/${asset.id}`} className="hover:underline">
+            {asset.title}
+          </Link>
         </p>
       )}
 
-      <p className="mt-2 whitespace-pre-line text-sm">{message}</p>
+      <p className="mt-3 whitespace-pre-line text-sm">{message}</p>
     </li>
   );
 }

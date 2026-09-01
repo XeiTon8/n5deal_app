@@ -15,7 +15,7 @@ export function SuspendButton({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="cursor-pointer rounded-md border border-amber-300 px-3 py-1 text-xs text-amber-800 hover:bg-amber-50"
+        className="cursor-pointer rounded-full border border-amber-300 px-4 py-1.5 text-xs text-amber-800 transition-colors hover:bg-amber-50"
       >
         Suspend
       </button>
@@ -23,7 +23,7 @@ export function SuspendButton({
   }
 
   return (
-    <form action={action} className="flex items-center gap-2">
+    <form action={action} className="flex flex-wrap items-center gap-2">
       <input type="hidden" name="id" value={id} />
       <input
         name="reason"
@@ -31,18 +31,18 @@ export function SuspendButton({
         minLength={5}
         autoFocus
         placeholder="Reason (visible to the participant)"
-        className="w-64 rounded-md border px-2 py-1 text-xs"
+        className="w-64 rounded-lg border border-line px-3 py-1.5 text-xs"
       />
       <button
         type="submit"
-        className="cursor-pointer rounded-md bg-amber-600 px-3 py-1 text-xs text-white"
+        className="cursor-pointer rounded-full bg-amber-600 px-4 py-1.5 text-xs text-white transition-colors hover:bg-amber-700"
       >
         Confirm
       </button>
       <button
         type="button"
         onClick={() => setOpen(false)}
-        className="cursor-pointer text-xs text-gray-500"
+        className="cursor-pointer text-xs text-muted hover:text-ink"
       >
         Cancel
       </button>
@@ -62,7 +62,7 @@ export function RestoreButton({
       <input type="hidden" name="id" value={id} />
       <button
         type="submit"
-        className="cursor-pointer rounded-md border border-green-300 px-3 py-1 text-xs text-green-700 hover:bg-green-50"
+        className="cursor-pointer rounded-full border border-green-300 px-4 py-1.5 text-xs text-green-700 transition-colors hover:bg-green-50"
       >
         Restore
       </button>

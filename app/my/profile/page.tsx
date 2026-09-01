@@ -13,10 +13,10 @@ export default async function MyProfilePage() {
 
   return (
     <main className="mx-auto max-w-2xl p-8">
-      <h1 className="text-2xl font-semibold">
+      <h1 className="text-3xl font-semibold tracking-tight">
         {profile ? "Edit your profile" : "Create your buyer profile"}
       </h1>
-      <p className="mt-1 mb-6 text-sm text-gray-500">
+      <p className="mt-1 mb-6 text-sm text-muted">
         {profile
           ? "Changes appear in the buyer directory immediately."
           : "Until you publish a profile, sellers cannot find you in the directory."}

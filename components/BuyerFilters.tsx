@@ -69,19 +69,15 @@ export function BuyerFilters() {
 
   return (
     <div
-      className={`space-y-5 rounded-lg border p-4 transition-opacity ${
-        isPending ? "opacity-60" : ""
-      }`}
+      className={`card space-y-5 p-4 transition-opacity ${isPending ? "opacity-60" : ""}`}
     >
-      <div>
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search buyers"
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        />
-      </div>
+      <input
+        type="search"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search buyers"
+        className="w-full rounded-full border border-line px-4 py-2 text-sm"
+      />
 
       <FilterGroup
         title="Industry"
@@ -108,8 +104,8 @@ export function BuyerFilters() {
       />
 
       <div>
-        <div className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-         Budget, USD
+        <div className="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted">
+          Budget, USD
         </div>
         <div className="flex gap-2">
           <input
@@ -118,7 +114,7 @@ export function BuyerFilters() {
             defaultValue={searchParams.get("minBudget") ?? ""}
             onBlur={(e) => setNumber("minBudget", e.target.value)}
             placeholder="From"
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-line px-3 py-2 text-sm"
           />
           <input
             type="number"
@@ -126,7 +122,7 @@ export function BuyerFilters() {
             defaultValue={searchParams.get("maxBudget") ?? ""}
             onBlur={(e) => setNumber("maxBudget", e.target.value)}
             placeholder="To"
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-line px-3 py-2 text-sm"
           />
         </div>
       </div>
@@ -137,7 +133,7 @@ export function BuyerFilters() {
             setQuery("");
             startTransition(() => router.replace(pathname, { scroll: false }));
           }}
-          className="text-sm text-gray-600 underline underline-offset-2 cursor-pointer"
+          className="cursor-pointer text-sm text-brand hover:underline"
         >
           Reset all
         </button>
@@ -161,7 +157,7 @@ function FilterGroup<T extends string>({
 }) {
   return (
     <div>
-      <div className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+      <div className="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted">
         {title}
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -172,10 +168,10 @@ function FilterGroup<T extends string>({
               key={option}
               onClick={() => onToggle(option)}
               aria-pressed={active}
-              className={`rounded-full border px-3 py-1 text-sm transition-colors cursor-pointer ${
+              className={`cursor-pointer rounded-full border px-3 py-1 text-sm transition-colors ${
                 active
-                  ? "border-gray-900 bg-gray-900 text-white"
-                  : "border-gray-300 hover:border-gray-400"
+                  ? "border-ink bg-ink text-white"
+                  : "border-line text-muted hover:border-muted"
               }`}
             >
               {labels[option]}

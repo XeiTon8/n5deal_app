@@ -8,8 +8,8 @@ export default async function NewAssetPage() {
 
   return (
     <main className="mx-auto max-w-2xl p-8">
-      <h1 className="text-2xl font-semibold">Publish an asset</h1>
-      <p className="mt-1 mb-6 text-sm text-gray-500">
+      <h1 className="text-3xl font-semibold tracking-tight">Publish an asset</h1>
+      <p className="mt-1 mb-6 text-sm text-muted">
         Listed as {user.companyName ?? user.name}.
       </p>
       <AssetForm />

@@ -6,7 +6,10 @@ import { type SearchParams } from "@/lib/filters";
 import { INDUSTRY_LABELS } from "@/lib/constants";
 import { SuspendButton, RestoreButton } from "@/components/ModerationActionts";
 import {
-  suspendUser, restoreUser, suspendAsset, restoreAsset,
+  suspendUser,
+  restoreUser,
+  suspendAsset,
+  restoreAsset,
 } from "@/app/actions/moderation";
 
 const TABS = [
@@ -24,23 +27,24 @@ export default async function AdminPage({
   if (user?.role !== "MANAGER") redirect("/assets");
 
   const sp = await searchParams;
-  const tab = typeof sp.tab === "string" && TABS.some(([t]) => t === sp.tab) ? sp.tab : "buyers";
+  const tab =
+    typeof sp.tab === "string" && TABS.some(([t]) => t === sp.tab) ? sp.tab : "buyers";
   const q = typeof sp.q === "string" ? sp.q.trim() : "";
   const onlySuspended = sp.status === "suspended";
 
   return (
     <main className="mx-auto max-w-4xl p-8">
-      <h1 className="text-2xl font-semibold">Platform administration</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Platform administration</h1>
 
-      <nav className="mt-6 flex gap-1 border-b">
+      <nav className="mt-6 flex gap-1 border-b border-line">
         {TABS.map(([value, label]) => (
           <Link
             key={value}
             href={`/admin?tab=${value}`}
             className={`px-4 py-2 text-sm ${
               tab === value
-                ? "border-b-2 border-gray-900 font-medium"
-                : "text-gray-500 hover:text-gray-900"
+                ? "border-b-2 border-brand font-medium text-brand"
+                : "text-muted hover:text-ink"
             }`}
           >
             {label}
@@ -48,15 +52,15 @@ export default async function AdminPage({
         ))}
       </nav>
 
-      <form className="mt-4 flex gap-2">
+      <form className="mt-4 flex flex-wrap items-center gap-3">
         <input type="hidden" name="tab" value={tab} />
         <input
           name="q"
           defaultValue={q}
           placeholder="Search by name or title"
-          className="w-full rounded-md border px-3 py-2 text-sm"
+          className="min-w-48 flex-1 rounded-full border border-line bg-white px-4 py-2 text-sm"
         />
-        <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm">
+        <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm text-muted">
           <input
             type="checkbox"
             name="status"
@@ -65,10 +69,7 @@ export default async function AdminPage({
           />
           Suspended only
         </label>
-        <button
-          type="submit"
-          className="cursor-pointer rounded-md border px-4 py-2 text-sm"
-        >
+        <button type="submit" className="btn-secondary">
           Apply
         </button>
       </form>
@@ -89,7 +90,9 @@ export default async function AdminPage({
 }
 
 async function ParticipantsTab({
-  role, q, onlySuspended,
+  role,
+  q,
+  onlySuspended,
 }: {
   role: "BUYER" | "SELLER";
   q: string;
@@ -117,22 +120,22 @@ async function ParticipantsTab({
   });
 
   if (users.length === 0) {
-    return <p className="text-sm text-gray-500">Nothing matches this search.</p>;
+    return <p className="text-sm text-muted">Nothing matches this search.</p>;
   }
 
   return (
     <ul className="space-y-2">
       {users.map((u) => (
-        <li key={u.id} className="rounded-lg border p-4">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="font-medium">{u.companyName ?? u.name}</div>
-              <div className="text-sm text-gray-600">
+        <li key={u.id} className="card p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="font-semibold">{u.companyName ?? u.name}</div>
+              <div className="text-sm text-muted">
                 {u.email}
                 {role === "SELLER" && ` · ${u._count.assets} listings`}
               </div>
               {u.buyerProfile && (
-                <div className="mt-1 text-sm text-gray-600">{u.buyerProfile.headline}</div>
+                <div className="mt-1 text-sm text-muted">{u.buyerProfile.headline}</div>
               )}
             </div>
 
@@ -146,8 +149,10 @@ async function ParticipantsTab({
           </div>
 
           {u.status === "SUSPENDED" && (
-            <p className="mt-3 rounded-md bg-amber-50 p-2 text-xs text-amber-800">
-              Suspended{u.statusChangedAt && ` on ${u.statusChangedAt.toLocaleDateString("en-GB")}`}
+            <p className="mt-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">
+              Suspended
+              {u.statusChangedAt &&
+                ` on ${u.statusChangedAt.toLocaleDateString("en-GB")}`}
               {u.suspensionReason && `: ${u.suspensionReason}`}
             </p>
           )}
@@ -168,17 +173,17 @@ async function AssetsTab({ q, onlySuspended }: { q: string; onlySuspended: boole
   });
 
   if (assets.length === 0) {
-    return <p className="text-sm text-gray-500">Nothing matches this search.</p>;
+    return <p className="text-sm text-muted">Nothing matches this search.</p>;
   }
 
   return (
     <ul className="space-y-2">
       {assets.map((a) => (
-        <li key={a.id} className="rounded-lg border p-4">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="font-medium">{a.title}</div>
-              <div className="text-sm text-gray-600">
+        <li key={a.id} className="card p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="font-semibold">{a.title}</div>
+              <div className="text-sm text-muted">
                 {INDUSTRY_LABELS[a.industry]} · ${a.askingPrice.toLocaleString("en-US")} ·{" "}
                 {a.seller.companyName ?? a.seller.name}
               </div>
@@ -194,13 +199,13 @@ async function AssetsTab({ q, onlySuspended }: { q: string; onlySuspended: boole
           </div>
 
           {a.seller.status === "SUSPENDED" && a.status !== "SUSPENDED" && (
-            <p className="mt-3 rounded-md bg-gray-100 p-2 text-xs text-gray-600">
+            <p className="mt-3 rounded-lg bg-page p-2 text-xs text-muted">
               Hidden from the marketplace because the seller is suspended.
             </p>
           )}
 
           {a.status === "SUSPENDED" && a.suspensionReason && (
-            <p className="mt-3 rounded-md bg-amber-50 p-2 text-xs text-amber-800">
+            <p className="mt-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">
               Suspended: {a.suspensionReason}
             </p>
           )}

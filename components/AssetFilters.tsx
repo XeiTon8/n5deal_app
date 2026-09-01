@@ -30,6 +30,8 @@ export function AssetFilters() {
     [router, pathname, searchParams]
   );
 
+  // Debounce for the text search: one request after typing stops,
+  // not one per keystroke.
   useEffect(() => {
     const current = searchParams.get("q") ?? "";
     if (query === current) return;
@@ -69,19 +71,15 @@ export function AssetFilters() {
 
   return (
     <div
-      className={`space-y-5 rounded-lg border p-4 transition-opacity ${
-        isPending ? "opacity-60" : ""
-      }`}
+      className={`card space-y-5 p-4 transition-opacity ${isPending ? "opacity-60" : ""}`}
     >
-      <div>
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search assets"
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        />
-      </div>
+      <input
+        type="search"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search assets"
+        className="w-full rounded-full border border-line px-4 py-2 text-sm"
+      />
 
       <FilterGroup
         title="Industry"
@@ -108,7 +106,7 @@ export function AssetFilters() {
       />
 
       <div>
-        <div className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+        <div className="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted">
           Asking price, USD
         </div>
         <div className="flex gap-2">
@@ -118,7 +116,7 @@ export function AssetFilters() {
             defaultValue={searchParams.get("minPrice") ?? ""}
             onBlur={(e) => setNumber("minPrice", e.target.value)}
             placeholder="From"
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-line px-3 py-2 text-sm"
           />
           <input
             type="number"
@@ -126,7 +124,7 @@ export function AssetFilters() {
             defaultValue={searchParams.get("maxPrice") ?? ""}
             onBlur={(e) => setNumber("maxPrice", e.target.value)}
             placeholder="To"
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-line px-3 py-2 text-sm"
           />
         </div>
       </div>
@@ -137,7 +135,7 @@ export function AssetFilters() {
             setQuery("");
             startTransition(() => router.replace(pathname, { scroll: false }));
           }}
-          className="text-sm text-gray-600 underline underline-offset-2 cursor-pointer"
+          className="cursor-pointer text-sm text-brand hover:underline"
         >
           Reset all
         </button>
@@ -161,7 +159,7 @@ function FilterGroup<T extends string>({
 }) {
   return (
     <div>
-      <div className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+      <div className="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted">
         {title}
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -172,10 +170,10 @@ function FilterGroup<T extends string>({
               key={option}
               onClick={() => onToggle(option)}
               aria-pressed={active}
-              className={`rounded-full border px-3 py-1 text-sm transition-colors cursor-pointer ${
+              className={`cursor-pointer rounded-full border px-3 py-1 text-sm transition-colors ${
                 active
-                  ? "border-gray-900 bg-gray-900 text-white"
-                  : "border-gray-300 hover:border-gray-400"
+                  ? "border-ink bg-ink text-white"
+                  : "border-line text-muted hover:border-muted"
               }`}
             >
               {labels[option]}
