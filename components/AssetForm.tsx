@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createAsset, type FormState } from "@/app/actions/assets";
 import {
@@ -52,6 +52,45 @@ function Submit() {
   );
 }
 
+function DescriptionField({
+  defaultValue,
+  errors,
+}: {
+  defaultValue: string;
+  errors?: string[];
+}) {
+  const MIN = 40;
+  const [value, setValue] = useState(defaultValue);
+  const remaining = MIN - value.trim().length;
+
+  return (
+    <div>
+      <label htmlFor="description" className="mb-1.5 block text-sm font-medium">
+        Description
+      </label>
+      <textarea
+        id="description"
+        name="description"
+        rows={5}
+        required
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        className={input}
+      />
+      <div className="mt-1 flex justify-between gap-4 text-xs">
+        <span className={`shrink-0 tabular-nums ${remaining > 0 ? "text-muted" : "text-accent"}`}>
+          {remaining > 0 ? `${remaining}` : `${value.trim().length}`}
+        </span>
+      </div>
+      {errors?.map((e) => (
+        <p key={e} className="mt-1 text-xs text-red-600">
+          {e}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 export function AssetForm() {
   const [state, action] = useActionState<FormState, FormData>(createAsset, {});
   const v = state.values ?? {};
@@ -69,21 +108,7 @@ export function AssetForm() {
         <input id="title" name="title" required defaultValue={v.title ?? ""} className={input} />
       </Field>
 
-      <Field
-        label="Description"
-        name="description"
-        errors={e.description}
-        hint="At least 40 characters."
-      >
-        <textarea
-          id="description"
-          name="description"
-          rows={5}
-          required
-          defaultValue={v.description ?? ""}
-          className={input}
-        />
-      </Field>
+      <DescriptionField defaultValue={v.description ?? ""} errors={e.description} />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Industry" name="industry" errors={e.industry}>
